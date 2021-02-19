@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <title>Clipper Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="process_start()">
+	<div class="wrapper">
+			<nav class="navbar">
+				<img class="logo" src="download.png">
+				<ul>
+					<li><a class="active" onclick='GoBack()' href="#">Home</a></li>
+                </ul>
+			</nav>
+        <div class="center">
+            <h3 id="congr">Hello I am There</h3>
+            <div class="container">
+            <label type="text" id="name"></label>
+            <label type="text" id="location"></label>
+            </div>     
+        </div>
+    </div>
+</body>
+<script>
+    let process_start = () => {
+        console.log("Inn")
+        let fname = localStorage.getItem("fname");
+        document.getElementById("congr").innerHTML = `Hi ${fname}, your Clipper card is being processed`;
+        document.getElementById("name").innerHTML = `${localStorage.getItem("fname") + " " + localStorage.getItem("lname")}`;
+        document.getElementById("location").innerHTML = `This form was ${localStorage.getItem("location")} at ${localStorage.getItem("time")}`;
+    }
+    let GoBack = () =>{
+        window.location.href = "../index.html"
+    }
+</script>
+</html>

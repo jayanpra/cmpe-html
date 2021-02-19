@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <title>Clipper Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<body onload="process_start()">
+	<div class="wrapper">
+			<nav class="navbar">
+				<img class="logo" src="download.png">
+                <h1 id="header1">Clipper Card Services</h1>
+			</nav>
+			<div class="center">
+			<div class="container">
+                <form>
+                    <div class="container">        
+                  <label for="fname">First Name</label>
+                  <input type="text" id="fname" name="firstname" placeholder="Your name.." required autofocus>     
+                  <label for="lname">Last Name</label>
+                  <input type="text" id="lname" name="lastname" placeholder="Your last name.." required></div>   
+                  <label for="contact">Contact Number</label>
+                  <input type="text" id="contact" onfocusout="format_contact_number()" name="contact" placeholder="Your Contact no..." required>
+                  <label for="Email">Email</label>
+                  <input type="text" onfocusout="validate_email()" id="email" name="email" placeholder="Your email..."><br>
+                  <label for="id" id = "id_label">Select ID</label> 
+                  <select id="id" name="id">
+                    <option value="SSN">SSN</option>
+                    <option value="driving licence">Driving Licence</option>
+                    <option value="Passport">Passport</option>
+                  </select>
+                  <input type="text" id="id_number" name="id_number" placeholder="ID number..." required><br><br>
+                  <label type="text" id="location"></label>
+                </form>
+              </div><br>
+			<div class="buttons">
+			<button onclick="saveForm()">Submit</button><br>
+            <button class="btn2" onclick='sendHome()'>Go Back</button>
+		</div>
+		</div>
+        <p id="getResult1"></p>
+</body>
+<script>
+    let process_start = () =>{
+        let item = sessionStorage.getItem("color")
+        if (item == "Red") {
+            document.getElementById("header1").innerHTML = "Form For Temporary Clipper Card";
+            document.getElementById("id_label").style.display = "none";
+            document.getElementById("id").style.display = "none";
+            document.getElementById("id_number").style.display = "none";
+        }
+        else {
+            document.getElementById("header1").innerHTML = "Form For Permanent Clipper Card";
+        }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else { 
+             document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+    let showPosition = (position) => {
+        document.getElementById("location").innerHTML = `Signed from Location: ${format_location(position.coords.latitude)} ${format_location(position.coords.longitude, longitude = true)} `;
+    }
+    let format_location = (number, longitute = false) => {
+        if (number > 0 && !longitute) {
+            return `${number.toFixed(2)} N`;
+        }
+        else if (number < 0 && !longitute) {
+            return `${(number * -1).toFixed(2)} S`;
+        }
+        else if (number > 0 && longitute) {
+            return `${number.toFixed(2)} E`;
+        }
+        else if (number < 0 && longitute) {
+            return `${(number * -1).toFixed(2)} W`;
+        }
+    }
+    let format_contact_number = () => {
+        let contact_string = document.getElementById("contact").value;
+        let p_reg = new RegExp('[0-9]+');
+        if (contact_string.length == 10 && p_reg.test(contact_string)){
+            document.getElementById("contact").value = `(${contact_string.substring(0,3)})${contact_string.substring(3,6)}-${contact_string.substring(6,10)}`
+        }
+        else {
+            alert("Invalid Contact");
+        }
+    }
+    let validate_email = () => {
+        let email_val = /\S+@\S+\.\S+/
+        if (!email_val.test(document.getElementById("email").value)){
+            alert(`Invalid Email`);
+        };
+    }
+    let saveForm = () => {
+        let today = new Date();
+        let h = today.getHours();
+        let m = today.getMinutes();
+        let s = today.getSeconds();
+        localStorage.setItem("fname", document.getElementById("fname").value);
+        localStorage.setItem("lname", document.getElementById("lname").value);
+        localStorage.setItem("contact", document.getElementById("contact").value);
+        localStorage.setItem("email", document.getElementById("email").value);
+        if (sessionStorage.getItem("color") != "Red") {
+            localStorage.setItem("id_type", document.getElementById("id").value);
+            localStorage.setItem("id_numnber", document.getElementById("id_number").value);
+        }
+        localStorage.setItem("location", document.getElementById("location").innerHTML);
+        localStorage.setItem("time",`${h}:${m}:${s}`);
+        window.location.href = "view.html";
+    }
+    let sendHome = () => {
+        window.location.href = "../index.html";
+    }
+</script>
+</html>
